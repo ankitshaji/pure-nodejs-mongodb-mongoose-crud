@@ -28,7 +28,7 @@ mongoose
 // MODEL SETUP
 // *******************************************
 //blueprint of a single document in movies collection -
-//mongooseObject.schemaClassObject(objectArgument passed to constructor method)
+//mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
 //creating movieSchemaInstanceObject - with new keyword and schemaClassObject constructor method
 const movieSchema = new mongoose.Schema({
@@ -48,6 +48,7 @@ const Movie = mongoose.model("Movie", movieSchema);
 // *******************************************
 //CREATE - creating a single new document for the collection
 // *******************************************
+//modelClass
 //movieClassObject(objectArgument-passed to constructor method)
 //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
 //create modelInstanceObject - with new keyword and movieClassObject constructor method
