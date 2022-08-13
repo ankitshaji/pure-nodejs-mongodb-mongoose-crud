@@ -5,7 +5,6 @@ const mongoose = require("mongoose"); //mongooseObject //mongoose module
 // CONNECT - nodeJS runtime app connects to default mogod server port + creates db
 // *******************************************
 //mongooseObject.method(url/defaultPortNo/databaseToUse,optionsObject-notNeeded) //returns promiseObject pending
-//nodeJS runtime app connects to default mogod server port + creates db
 mongoose
   .connect("mongodb://localhost:27017/moviesdb", {
     useNewUrlParser: true,
