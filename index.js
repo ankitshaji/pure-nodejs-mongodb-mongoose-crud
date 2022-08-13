@@ -111,7 +111,7 @@ const Movie = mongoose.model("Movie", movieSchema);
 //promiseObject version - Movie.find(queryObject).exec();
 
 // *******************************************
-//UPDATE - querying a collection for a document/documents then updating it + can new add key:value pair
+//UPDATE - querying a collection for a document/documents then updating it + can add new key:value pair
 // *******************************************
 //movieClassObject.method(queryObject,updateObject) ie modelClassObject.method()
 
