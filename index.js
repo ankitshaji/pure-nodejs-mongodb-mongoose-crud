@@ -40,7 +40,7 @@ const Movie = mongoose.model("Movie", movieSchema);
 //creating a new document for the collection
 //movieClassObject(objectArgument-passed to constructor method)
 //objectArgument- the new document ie {key:value}
-//create object instance - with new keyword and movieClassObject constructor method
+//create modelInstanceObject - with new keyword and movieClassObject constructor method
 const amadeus = new Movie({
   title: "Amadeus",
   year: 1986,
@@ -50,9 +50,26 @@ const amadeus = new Movie({
 amadeus.score = 9.9; //update modelObject.property value
 console.dir(amadeus); //modelObject
 
-//inserting the modelObject(amadeus) ie document into the collection(movies)
+//creating mutiple new documents for the collection - dont usually use
+//movieClassObject.method(array of objects) - modelClassObject.method()
+//db.movies.insertMany([{title:"Amelia"},{title:"Alien"}])
+//returns promiseObject //do not need to modelObject.save()
+Movie.insertMany([
+  { title: "Amelia", year: 2001, score: 8.3, rating: "R" },
+  { title: "Alien", year: 1979, score: 8.1, rating: "R" },
+  { title: "The Iron Giant", year: 1999, score: 7.5, rating: "PG" },
+  { title: "Stand By Me", year: 1986, score: 8.6, rating: "R" },
+  { title: "Moonrise Kingdom", year: 2012, score: 7.3, rating: "PG-13" },
+]).then((data) => {
+  console.log(
+    "promiseObject resolved - Inserted documents to movies collection"
+  );
+  console.log(data);
+});
+
+//inserting the modelInstanceObject(amadeus) ie document into the collection(movies)
 //creates the collection if not already existing
-amadeus.save(); //returns promiseObject - pending to resolved or rejected
+//amadeus.save(); //returns promiseObject
 
 //Other info -
 //node - opens repl
