@@ -1,6 +1,9 @@
 //mongoose ODM - has callback but also supports promises-ie returns promiseObject (pending,undefined) to -resove(value)(fullfulled,value) or reject(errorMessage)(rejected,errorMessage)
 const mongoose = require("mongoose"); //mongooseObject //mongoose module
 
+// *******************************************
+// CONNECT - nodeJS runtime app connects to default mogod server port + creates db
+// *******************************************
 //mongooseObject.method(url/defaultPortNo/databaseToUse,optionsObject-notNeeded) //returns promiseObject pending
 //nodeJS runtime app connects to default mogod server port + creates db
 mongoose
@@ -22,6 +25,9 @@ mongoose
 //await the promiseObject-pending to resolved() in try block and catch error if it throws error or is rejected
 //also instead of catch with try, we can .catch() on async function exectution to catch rejected or throw error promiseObject
 
+// *******************************************
+// MODEL SETUP
+// *******************************************
 //blueprint of a single document in movies collection -
 //mongooseObject.schemaClassObject(objectArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
@@ -32,15 +38,17 @@ const movieSchema = new mongoose.Schema({
   score: Number,
   rating: String,
 });
-
 //creating movieClassObject ie(Model) - represents a collection (movies)
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
 const Movie = mongoose.model("Movie", movieSchema);
 
+// *******************************************
 //MongoDB CRUD Operations using mongoose-ODM (modelClassObject)-
+// *******************************************
 
-//CREATE -
-//creating a new document for the collection
+// *******************************************
+//CREATE - creating a single new document for the collection
+// *******************************************
 //movieClassObject(objectArgument-passed to constructor method)
 //objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
 //create modelInstanceObject - with new keyword and movieClassObject constructor method
@@ -57,8 +65,9 @@ const Movie = mongoose.model("Movie", movieSchema);
 //same as - db.movies.insertOne({title:"Amelia"})- argument-single jsObject/json/document,method-converts jsObject/json/doscument to BSON + auto create id
 //amadeus.save(); //returns promiseObject pending to resolve(data) or reject(data)
 
-//CREATE -
-//creating mutiple new documents for the collection - dont usually use
+// *******************************************
+//CREATE - creating mutiple new documents for the collection - dont usually use
+// *******************************************
 //creates the collection if not already existing
 //movieClassObject.method(array of jsObjects) - modelClassObject.method()
 //returns promiseObject pending to resolve(data) or reject(data) //do not need to modelObject.save()
@@ -76,8 +85,9 @@ const Movie = mongoose.model("Movie", movieSchema);
 //   console.log(data);
 // });
 
-//READ -
-////querying a collection for a document
+// *******************************************
+//READ - querying a collection for a document/documents
+// *******************************************
 //movieClassObject.method(queryObject) ie modelClassObject.method()
 //Movie.find() //returns thenableObject pending to resolve(data) or reject(err) //data is an array of jsObjects
 //same as - db.movies.find({title:"Amelia"})- argument-queryObject,method-returns iterable cursor(ie reference to array of jsObjects/jsons/documents)
@@ -100,6 +110,30 @@ const Movie = mongoose.model("Movie", movieSchema);
 //callback version - Movie.find(queryObject,function(err,data){})
 //promiseObject version - Movie.find(queryObject).exec();
 
-//Other info -
+// *******************************************
+//READ - querying a collection for a document/documents then updating it + can new add key:value pair
+// *******************************************
+//movieClassObject.method(queryObject,updateObject) ie modelClassObject.method()
+//Movie.update(queryObject,updateObject) //returns thenableObject pending to resolve(message) or reject(err) //message is a jsObjects
+//same as - db.movies.update({title:"Amelia"},{$set:{year:1984}})- argument-queryObject,updateObjectWithUpdateOperator,method-updates all matching jsObject/json/document returns messageObject
+////queryObject can contain queryOperator
+//Movie.update({title:"Amadeus"},{year:1984}).then((message)=>{console.log(message)})-argument-queryObject,updateObject,method-updates all matching jsObject/json/document //returns thenableObject //message is jsObject
+
+//Movie.updateOne(queryObject,updateObject) //returns thenableObject pending to resolve(message) or reject(err) //message is a jsObjects
+//same as - db.movies.updateOne({title:"Amelia"},{$set:{year:1984}})- argument-queryObject,updateObjectWithUpdateOperator,method-updates single first matching jsObject/json/document returns messageObject
+////queryObject can contain queryOperator
+//Movie.updateOne({title:"Amadeus"},{year:1984}).then((message)=>{console.log(message)})-argument-queryObject,updateObject,method-updates single first matching jsObject/json/document //returns thenableObject //message is jsObject
+
+//Movie.updateMany(queryObjectwithQueryOperator,updateObject) ie modelClassObject.method()
+//same as - db.movies.updateMany({title:{$in:["Amadeus","Stand By Me"]}},{$set:{score:10}}) - argument-queryObject,updateObjectWithUpdateOperator,method-updates all matching jsObject/json/document-returns messageObject
+////queryObject can contain queryOperator
+//Movie.updateMany({title:{$in:["Amadeus","Stand By Me"]}},{score:10}).then((message)=>{console.log(message)})-argument-queryObjectwithQueryOperator,updateObject,method-updates all jsObject/json/document matching queryObjectwithQueryOperator //returns thenableObject //message is jsObject
+
+//Movie.findOneAndUpdate(queryObjectwithQueryOperator,updateObject,optionObject).then((data)=>{console.log(data)})
+//argument-queryObjectwithQueryOperator,updateObject,method-updates single first matching jsObject/json/document //returns thenableObject //data is non-update single first matching jsObject/json/document unless optionObject{new:true}
+
+// *******************************************
+//RUNNING INFO -
+// *******************************************
 //node - opens repl
 //.load index.js - run file in repl
