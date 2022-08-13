@@ -25,7 +25,7 @@ mongoose
 //blueprint of a single document in movies collection -
 //mongooseObject.schemaClassObject(objectArgument passed to constructor method)
 //objectArgument-{key:nodejs value type} for collection {keys:value}
-//creating object instance - with new keyword and schemaClassObject constructor method
+//creating movieSchemaInstanceObject - with new keyword and schemaClassObject constructor method
 const movieSchema = new mongoose.Schema({
   title: String,
   year: Number,
@@ -34,42 +34,71 @@ const movieSchema = new mongoose.Schema({
 });
 
 //creating movieClassObject ie(Model) - represents a collection (movies)
-//mongooseObject.method("collectionNameSingular",collectionSchema)
+//mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
 const Movie = mongoose.model("Movie", movieSchema);
 
+//MongoDB CRUD Operations using mongoose-ODM (modelClassObject)-
+
+//CREATE -
 //creating a new document for the collection
 //movieClassObject(objectArgument-passed to constructor method)
-//objectArgument- the new document ie {key:value}
+//objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
 //create modelInstanceObject - with new keyword and movieClassObject constructor method
-const amadeus = new Movie({
-  title: "Amadeus",
-  year: 1986,
-  score: 9.2,
-  rating: "R",
-});
-amadeus.score = 9.9; //update modelObject.property value
-console.dir(amadeus); //modelObject
-
-//creating mutiple new documents for the collection - dont usually use
-//movieClassObject.method(array of objects) - modelClassObject.method()
-//db.movies.insertMany([{title:"Amelia"},{title:"Alien"}])
-//returns promiseObject //do not need to modelObject.save()
-Movie.insertMany([
-  { title: "Amelia", year: 2001, score: 8.3, rating: "R" },
-  { title: "Alien", year: 1979, score: 8.1, rating: "R" },
-  { title: "The Iron Giant", year: 1999, score: 7.5, rating: "PG" },
-  { title: "Stand By Me", year: 1986, score: 8.6, rating: "R" },
-  { title: "Moonrise Kingdom", year: 2012, score: 7.3, rating: "PG-13" },
-]).then((data) => {
-  console.log(
-    "promiseObject resolved - Inserted documents to movies collection"
-  );
-  console.log(data);
-});
-
+// const amadeus = new Movie({
+//   title: "Amadeus",
+//   year: 1986,
+//   score: 9.2,
+//   rating: "R",
+// });
+// amadeus.score = 9.9; //update modelObject.property value
+// console.dir(amadeus); //modelObject
 //inserting the modelInstanceObject(amadeus) ie document into the collection(movies)
 //creates the collection if not already existing
-//amadeus.save(); //returns promiseObject
+//same as - db.movies.insertOne({title:"Amelia"})- argument-single jsObject/json/document,method-converts jsObject/json/doscument to BSON + auto create id
+//amadeus.save(); //returns promiseObject pending to resolve(data) or reject(data)
+
+//CREATE -
+//creating mutiple new documents for the collection - dont usually use
+//creates the collection if not already existing
+//movieClassObject.method(array of jsObjects) - modelClassObject.method()
+//returns promiseObject pending to resolve(data) or reject(data) //do not need to modelObject.save()
+//same as - db.movies.insertMany([{title:"Amelia"},{title:"Alien"}])- argument-array of jsObjects/jsons/documents,method-converts jsObjects/jsons/doscuments to BSON + auto create id
+// Movie.insertMany([
+//   { title: "Amelia", year: 2001, score: 8.3, rating: "R" },
+//   { title: "Alien", year: 1979, score: 8.1, rating: "R" },
+//   { title: "The Iron Giant", year: 1999, score: 7.5, rating: "PG" },
+//   { title: "Stand By Me", year: 1986, score: 8.6, rating: "R" },
+//   { title: "Moonrise Kingdom", year: 2012, score: 7.3, rating: "PG-13" },
+// ]).then((data) => {
+//   console.log(
+//     "promiseObject resolved - Inserted documents to movies collection"
+//   );
+//   console.log(data);
+// });
+
+//READ -
+////querying a collection for a document
+//movieClassObject.method(queryObject) ie modelClassObject.method()
+//Movie.find() //returns thenableObject pending to resolve(data) or reject(err) //data is an array of jsObjects
+//same as - db.movies.find({title:"Amelia"})- argument-queryObject,method-returns iterable cursor(ie reference to array of jsObjects/jsons/documents)
+//queryObject can contain queryOperator
+//Movie.find({}).then((data)=>{console.log(data)}) //data is array of all jsObjects
+//Movie.find({rating:"PG-13"}).then((data)=>{console.log(data)}) //data is array of jsObject matching queryObject
+//Movie.find({year:{$gte:2015}}).then((data)=>{console.log(data)}) //data is array of jsObjects matching queryObjectWithQueryOperator
+//Movie.find({_id:"62f6d544bc6bbae5da202f6b"}).then((data)=>{console.log(data)})
+
+//Movie.findOne() //returns thenableObject pending to resolve(data) or reject(err) //data is an jsObject
+//same as - db.movies.findOne({title:"Amelia"})- argument-queryObject,method-returns single first matching jsObject/json/document
+//queryObject can contain queryOperator
+//Movie.findOne({year:{$lte:1990}}).then((data)=>{console.log(data)}) //data is single first matching jsObject
+//Movie.findOne({_id:"62f6d544bc6bbae5da202f6b"}).then((data)=>{console.log(data)})
+
+//Movie.findById() //returns thenableObject pending to resolve(data) or reject(err) //data is an jsObject
+//Movie.findById("62f6d544bc6bbae5da202f6b").then(data=>console.log(data)) //argument-idString,data is single first matching jsObject
+
+//side note -
+//callback version - Movie.find(queryObject,function(err,data){})
+//promiseObject version - Movie.find(queryObject).exec();
 
 //Other info -
 //node - opens repl
