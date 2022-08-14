@@ -51,9 +51,73 @@ const productSchema = new mongoose.Schema({
     enum: ["S", "M", "L"],
   },
 });
+
+// *******************************************
+//adding custom methods on productSchemaInstanceObject //thus adding custom methods to model - (case1)modelInstanceObject and (case2)productClassObject(ie modelClassObject)
+// *******************************************
+//grouping model logic - adding custom methods to each specifc model
+//usually a classObject has prototypeObject with methods available to all instanceObject through references to that prototypeObject in __proto__ property
+
+//case 1 - adding custom methods to modelInstanceObject(ie document) / dataObject
+//custome methods help easily update values in multiple modelInstanceObject(ie document) / dataObject
+//productSchemaInstanceObject.property.customeMethodName
+productSchema.methods.greet = function () {
+  console.log("Hello");
+  console.log(`- ${this.name}`); //this keyword (execution scope) left of dot modelInstanceObject / dataObject
+};
+
+productSchema.methods.toggleOnSale = function () {
+  this.onSale = !this.onSale; //this keyword (execution scope) left of dot modelInstanceObject / dataObject
+  //dataObject.save()
+  return this.save(); //returns promiseObject
+};
+
+//addCategory method takes argument
+productSchema.methods.addCategory = function (newCat) {
+  //categories is an array
+  this.categories.push(newCat); //this keyword (execution scope) left of dot modelInstanceObject or dataObject
+  //dataObject.save()
+  return this.save(); //returns promiseObject
+};
+
+//case 2 - adding custom methods to productClassObject (ie modelClassObject)
+//buit with existing model methods - fancier way to create/find/update/delete
+//this refers to modelClassObject //left of dot (execution scope)
+//productSchemaInstanceObject.property.customeMethodName
+productSchema.statics.fireSale = function () {
+  //productClassObject.method(queryObject,updateObject) ie modelClassObject.method()
+  return this.updateMany({}, { onSale: true, price: 0 }); //returns thenableObject
+};
+
 //creating productClassObject ie(Model) - represents a collection (products)
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
 const Product = mongoose.model("Product", productSchema);
+//makes custom methods available
+
+// *******************************************
+//READ - querying a collection for a document/documents
+// *******************************************
+//using - commond methods - modelInstanceObject / dataObject
+//variable stored anonymous async(skips) arrow function expression returns promiseObject(pending,undefined) to promiseObject(fullfilled,undefied(unless returned)) and (rejected,errorObject) on throw error
+const findProduct = async () => {
+  //productClassObject.method(queryObject) ie modelClassObject.method()
+  //returns promiseObject - pending to resolved(dataObject),rejected(errorObject)
+  const foundProduct = await Product.findOne({ name: "Mountain Bike" }); //foundProduct = dataObject
+  console.log(foundProduct);
+  //returns promiseObject - pending to resolved(dataObject),rejected(errorObject)
+  await foundProduct.toggleOnSale(); //customeMethod avaiable on dataObject //this keyword (execution scope) left of dot dataObject
+  //returns promiseObject - pending to resolved(dataObject),rejected(errorObject)
+  await foundProduct.addCategory("Outdoors");
+  console.log(foundProduct);
+};
+//findProduct(); //execute variable function expression
+
+//using - commond methods - productClassObject(ie modelClassObject)
+//this refers to modelClassObject //left of dot (execution scope)
+//returns thenableObject - pending to resolved(messageObject),rejected(errorObject)
+Product.fireSale().then((messageObject) => {
+  console.log(messageObject);
+});
 
 // *******************************************
 //CREATE - creating a single new document for the collection
@@ -66,7 +130,7 @@ const Product = mongoose.model("Product", productSchema);
 //cannot ommit name property, price gets converted to type number, addtional key:values get neglected(no error)
 //default gets set if property not passed in,name maxlength,price min val 0,categories:array of strings(converts numbers)(default array has one string),
 //setting validations/contraints for properties inside type:Object - default if ommited,size property value needs to be in pre fixed enum string array values
-//create modelInstanceObject - with new keyword and productClassObject constructor method
+//create modelInstanceObject(ie document) - with new keyword and productClassObject constructor method
 const bike = new Product({
   name: "Cycling Jersy",
   price: "60",
@@ -74,23 +138,25 @@ const bike = new Product({
   size: "M",
   additionalProp: "value",
 });
+//modelInstanceObject.customeMethod()
 //modelInstance.save() returns promiseObject - pending to resolved(dataObject),rejected(errorObject)
 //creates (products)collection in (shopdb)db and adds (bike)document into the (products)collection
-bike
-  .save()
-  .then((data) => {
-    console.log("promise resolved(dataObject)");
-    console.log(data); //jsObject of created document
-  })
-  .catch((err) => {
-    //breaking validation/contraints causes promiseObjec to be rejected(errObject)
-    console.log("promise rejected(errObject)");
-    console.log(err); //check message only err.errors.name.properties.message
-  });
+// bike
+//   .save()
+//   .then((data) => {
+//     console.log("promise resolved(dataObject)");
+//     console.log(data); //jsObject of created document
+//   })
+//   .catch((err) => {
+//     //breaking validation/contraints causes promiseObjec to be rejected(errObject)
+//     console.log("promise rejected(errObject)");
+//     console.log(err); //check message only err.errors.name.properties.message
+//   });
 
 // *******************************************
 //UPDATE - querying a collection for a document/documents then updating it + can add new key:value pair
 // *******************************************
+//modelClass
 //productClassObject.method(queryObject,updateObject,optionObject) ie modelClassObject.method()
 //returns thenableObject + data is updated jsObject
 //To run validations/contraints when updating we need to set in optionsObject
