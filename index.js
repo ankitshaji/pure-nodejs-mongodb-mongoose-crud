@@ -82,7 +82,7 @@ productSchema.methods.addCategory = function (newCat) {
 
 //case 2 - adding custom methods to productClassObject (ie modelClassObject)
 //buit with existing model methods - fancier way to create/find/update/delete
-//this refers to modelClassObject //left of dot (execution scope)
+//this keyword refers to modelClassObject //left of dot (execution scope)
 //productSchemaInstanceObject.property.customeMethodName
 productSchema.statics.fireSale = function () {
   //productClassObject.method(queryObject,updateObject) ie modelClassObject.method()
@@ -112,8 +112,8 @@ const findProduct = async () => {
 };
 //findProduct(); //execute variable function expression
 
-//using - commond methods - productClassObject(ie modelClassObject)
-//this refers to modelClassObject //left of dot (execution scope)
+//using - custom methods - productClassObject(ie modelClassObject)
+//this keyword refers to modelClassObject //left of dot (execution scope)
 //returns thenableObject - pending to resolved(messageObject),rejected(errorObject)
 Product.fireSale().then((messageObject) => {
   console.log(messageObject);
