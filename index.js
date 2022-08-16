@@ -127,13 +127,39 @@ personSchema.virtual("fullName").set(function (v) {
   this.last = v.substr(v.indexOf(" ") + 1);
 });
 
+// *******************************************
+//adding middleware(hook)function on personSchemaInstanceObject - //thus adding middleware(hook) function to model - (case1)modelInstanceObject/dataObject
+// middleware(hook)function executes code before or after a mongoose method
+// *******************************************
+//usefull to keep track of global count of mongoose method use
+//eg- pre middleware added to remove() mongoose method that removes other associated info
+//mongoose methods - save(),remove(),updateOne() etc
+
+//personSchemaInstanceObject.method(argument -"mongooseMethod",callback to execute before mongooseMethod)
+//case1 - callback(next){//dostuff next()} or case2 - callback(){return promiseFunction().then(()=>otherStuff())}
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+personSchema.pre("save", async function () {
+  this.first = "Jonny";
+  this.last = "Silverhand";
+  console.log("About to save");
+});
+
+//personSchemaInstanceObject.method(argument -"mongooseMethod",callback to execute before mongooseMethod)
+//case1 - callback(next){//dostuff next()} or case2 - callback(){return promiseFunction().then(()=>otherStuff())}
+//async(ie continues running outside code if it hits an await inside) callback implicit returns promiseObject(resolved,undefined) - can await a promiseObject inside
+//async function expression without an await is just a normal syncronous function expression
+personSchema.post("save", async function () {
+  console.log("Just saved");
+});
+
 //creating personClassObject ie(Model) - represents a collection (people)
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
 const Person = mongoose.model("Person", personSchema);
 //makes virtual properties available
 
 // *******************************************
-//CREATE - creating a single new document for the collection
+//CREATE - creating a single new document for the collection(people)
 // *******************************************
 //modelClass
 //personClassObject(objectArgument-passed to constructor method)
@@ -173,7 +199,7 @@ Product.fireSale().then((messageObject) => {
 });
 
 // *******************************************
-//CREATE - creating a single new document for the collection
+//CREATE - creating a single new document for the collection - products
 // *******************************************
 //modelClass
 //productClassObject(objectArgument-passed to constructor method)
@@ -207,7 +233,7 @@ const bike = new Product({
 //   });
 
 // *******************************************
-//UPDATE - querying a collection for a document/documents then updating it + can add new key:value pair
+//UPDATE - querying a collection(products) for a document/documents then updating it + can add new key:value pair
 // *******************************************
 //modelClass
 //productClassObject.method(queryObject,updateObject,optionObject) ie modelClassObject.method()
