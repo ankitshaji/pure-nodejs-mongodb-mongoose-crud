@@ -24,7 +24,7 @@ mongoose
 //for mongoose to eastablish a connection to MongoDB
 
 // *******************************************
-// MODEL SETUP
+// MODEL SETUP 1
 // *******************************************
 //blueprint of a single document in products collection -
 //mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
@@ -93,6 +93,59 @@ productSchema.statics.fireSale = function () {
 //mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
 const Product = mongoose.model("Product", productSchema);
 //makes custom methods available
+
+// *******************************************
+// MODEL SETUP 2
+// *******************************************
+//blueprint of a single document in persons collection -
+//mongooseObject.schemaMethod = schemaClassObject(objectArgument passed to constructor method)
+//objectArgument-{key:nodejs value type} for collection {keys:value}
+//creating personSchemaInstanceObject - with new keyword and schemaClassObject constructor method
+const personSchema = new mongoose.Schema({
+  first: String,
+  last: String,
+});
+
+// *******************************************
+//adding virtual properties on personSchemaInstanceObject //thus adding virtual properties to model - (case1)modelInstanceObject/dataObject
+// *******************************************
+//grouping model logic - adding virtual properties to each specifc model
+//usually a classObject sets properties for each instanceObject when creating it
+
+//case 1 - adding virtual properties to modelInstanceObject(ie document) / dataObject
+//virtuals help to add property to a model ,property dosnt exist in collection
+//property is derived from collections real properties
+//getter method - modelInstanceObject.property
+//personSchemaInstanceObject.method(argument - "creatingPropertyName").method(argument - callback to execute for PropertyName)
+personSchema.virtual("fullName").get(function () {
+  return `${this.first} ${this.last}`;
+});
+//setter method - modelInstance.property = "Tammy Xiao" (ie v is string argument passed in)
+//personSchemaInstanceObject.method(argument -"creatingPropertyName").method(argument -  callback to execute for PropertyName)
+personSchema.virtual("fullName").set(function (v) {
+  this.first = v.substr(0, v.indexOf(" ")); //stringObject.method(0,string.method())
+  this.last = v.substr(v.indexOf(" ") + 1);
+});
+
+//creating personClassObject ie(Model) - represents a collection (people)
+//mongooseObject.method("collectionNameSingular",collectionSchemaInstanceObject)
+const Person = mongoose.model("Person", personSchema);
+//makes virtual properties available
+
+// *******************************************
+//CREATE - creating a single new document for the collection
+// *******************************************
+//modelClass
+//personClassObject(objectArgument-passed to constructor method)
+//objectArgument- jsObject{key:value} ie the new document that abides to collectionSchemaInstanceObject
+//objectArgument has validations/contraints set by collectionSchemaInstanceObject
+//create modelInstanceObject(ie document) - with new keyword and productClassObject constructor method
+const tammy = new Person({
+  first: "Tammy",
+  last: "Chow",
+});
+console.log(tammy.fullName);
+// tammy.save() //create + save to collection //auto pluralisation of Person to people collection
 
 // *******************************************
 //READ - querying a collection for a document/documents
